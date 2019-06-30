@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29001.49
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spark.Register", "Spark.Register\Spark.Register.csproj", "{B54903C3-01CE-4A78-B7D2-28CC84C4B116}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spark.Identity", "Spark.Identity\Spark.Identity.csproj", "{8D995AFB-20D3-4A80-BC09-FF2696492ABC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spark.Gateway", "Spark.Gateway\Spark.Gateway.csproj", "{A34CEB8E-EFFF-4CA6-98B9-BC33C0F082E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spark.Authentication", "Spark.Authentication\Spark.Authentication.csproj", "{A46E6F77-2585-4749-815E-EAD0A378CE95}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B54903C3-01CE-4A78-B7D2-28CC84C4B116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B54903C3-01CE-4A78-B7D2-28CC84C4B116}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B54903C3-01CE-4A78-B7D2-28CC84C4B116}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B54903C3-01CE-4A78-B7D2-28CC84C4B116}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D995AFB-20D3-4A80-BC09-FF2696492ABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D995AFB-20D3-4A80-BC09-FF2696492ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D995AFB-20D3-4A80-BC09-FF2696492ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D995AFB-20D3-4A80-BC09-FF2696492ABC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A34CEB8E-EFFF-4CA6-98B9-BC33C0F082E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A34CEB8E-EFFF-4CA6-98B9-BC33C0F082E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A34CEB8E-EFFF-4CA6-98B9-BC33C0F082E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A34CEB8E-EFFF-4CA6-98B9-BC33C0F082E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A46E6F77-2585-4749-815E-EAD0A378CE95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A46E6F77-2585-4749-815E-EAD0A378CE95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A46E6F77-2585-4749-815E-EAD0A378CE95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A46E6F77-2585-4749-815E-EAD0A378CE95}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA7D2231-278C-4340-9534-A4119C99B38A}
+	EndGlobalSection
+EndGlobal
