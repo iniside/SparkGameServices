@@ -10,6 +10,7 @@ using Spark.Register.Repository;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using RawRabbit;
+using Spark.Register.Events;
 
 namespace Spark.Register.Controllers
 {
@@ -55,6 +56,13 @@ namespace Spark.Register.Controllers
 
             Guid userGuid = await _userRepository.RegisterUserWithPassword(su);
 
+            UserRegisteredEvent newUser = new UserRegisteredEvent
+            {
+                UserId = userGuid,
+                ExternalId = null
+            };
+            await _client.PublishAsync(newUser);
+
             return await Task.FromResult(result);
         }
 
@@ -68,7 +76,15 @@ namespace Spark.Register.Controllers
                 
             };
 
+
             Guid userGuid = await _userRepository.RegisterUserWithExternalId(su, Model.ExternalName, Model.ExternalId);
+
+            UserRegisteredEvent newUser = new UserRegisteredEvent
+            {
+                UserId = userGuid,
+                ExternalId = Model.ExternalId
+            };
+            await _client.PublishAsync(newUser);
 
             return await Task.FromResult(result);
         }
