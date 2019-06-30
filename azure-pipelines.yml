@@ -17,12 +17,8 @@ variables:
 steps:
 - task: NuGetToolInstaller@0
 
-- task: DotNetCoreInstaller@0
-  displayName: 'Install .net core 3.0 (preview)'
-  inputs:
-    packageType: sdk
-    version: '3.0.100-preview6-012264'
-    installationPath: $(Agent.ToolsDirectory)/dotnet
+- powershell: choco install dotnetcore-sdk --pre
+  displayName: Install .NET Core 3.0 preview
 
 - task: NuGetCommand@2
   inputs:
