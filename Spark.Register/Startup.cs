@@ -51,6 +51,7 @@ namespace Spark.Register
                     .Get<RawRabbitConfiguration>(),
             });
             services.AddScoped<ISparkUserRepository, SparkUserRepository>();
+            
             services.AddControllers();
             
         }
