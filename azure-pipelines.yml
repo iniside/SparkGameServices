@@ -15,14 +15,8 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@0
-
 - powershell: choco install dotnetcore-sdk --pre
   displayName: Install .NET Core 3.0 preview
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
 
 - powershell:  dotnet build -r win-x64 -c release 
   displayName: Build native Windows executable
