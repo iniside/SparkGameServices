@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -9,6 +10,7 @@ namespace Spark.Authentication.Repository
     public interface IUserRepository
     {
         Task AddUser(Guid UserId, string ExternalId, string Provider);
+        Task<string> LoginWithExternalProvider(string ExternalId, string Provider);
     }
 
     public class UserRepository : IUserRepository
@@ -31,6 +33,29 @@ namespace Spark.Authentication.Repository
                 ExternalId = ExternalId,
                 Provider = Provider
             });
+        }
+
+        public async Task<string> LoginWithExternalProvider(string ExternalId, string Provider)
+        {
+            var filterID = Builders<SparkUser>.Filter.Where(e => e.ExternalId == ExternalId);
+            var filterProvider = Builders<SparkUser>.Filter.Where(e => e.Provider == Provider);
+
+            FilterDefinition<SparkUser> d = new ObjectFilterDefinition<SparkUser>(filterID);
+            FilterDefinition<SparkUser> o = new ObjectFilterDefinition<SparkUser>(filterProvider);
+
+            var filter = Builders<SparkUser>.Filter.And(new List<FilterDefinition<SparkUser>>
+            {
+                d,
+                o
+            });
+
+            var col = _database.GetCollection<SparkUser>("sparkUser");
+
+            var res = await col.FindAsync(filterID);
+
+            var user = await res.FirstAsync();
+
+            return await Task.FromResult(user.UserId.ToString());
         }
     }
 }
