@@ -11,11 +11,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
 using RawRabbit;
 using RawRabbit.Configuration;
 using RawRabbit.DependencyInjection.ServiceCollection;
 using RawRabbit.Enrichers.MessageContext.Context;
 using RawRabbit.Instantiation;
+using Spark.Authentication.Repository;
 using Spark.Register.Events;
 
 namespace Spark.Authentication
@@ -27,19 +32,28 @@ namespace Spark.Authentication
     public class EventHandler : IEventHandler
     {
         private readonly IBusClient _client;
-
-        public EventHandler(IBusClient client)
+        private readonly IUserRepository _userRepository;
+        public EventHandler(IBusClient client, IUserRepository userRepository)
         {
             _client = client;
+            _userRepository = userRepository;
 
             _client.SubscribeAsync<UserRegisteredEvent>(ServerValuesAsync);
         }
 
-        private static Task ServerValuesAsync(UserRegisteredEvent message)
+        private async Task ServerValuesAsync(UserRegisteredEvent message)
         {
-            return Task.FromResult(message);
+            await _userRepository.AddUser(message.UserId, message.ExternalId, message.Provider);
+            
         }
     }
+
+    public class Settings
+    {
+        public string ConnectionString { get; set; }
+        public string Database { get; set; }
+    }
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -52,6 +66,14 @@ namespace Spark.Authentication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<Settings>(options =>
+            {
+                options.ConnectionString
+                    = Configuration.GetSection("MongoConnection:ConnectionString").Value;
+                options.Database
+                    = Configuration.GetSection("MongoConnection:Database").Value;
+            });
+
             services.AddCors();
 
             services.AddRawRabbit(new RawRabbitOptions
@@ -63,10 +85,8 @@ namespace Spark.Authentication
                     .Get<RawRabbitConfiguration>(),
             });
 
-            services.AddSingleton<IEventHandler, EventHandler>(o =>
-            {
-                return new EventHandler(o.GetService<IBusClient>());
-            });
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IEventHandler, EventHandler>();
 
             services.AddControllers(o =>
             {

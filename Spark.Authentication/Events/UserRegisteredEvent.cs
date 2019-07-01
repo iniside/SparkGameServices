@@ -6,5 +6,6 @@ namespace Spark.Register.Events
     {
         public Guid UserId { get; set; }
         public string ExternalId { get; set; }
+        public string Provider { get; set; }
     }
 }
