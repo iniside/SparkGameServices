@@ -10,11 +10,11 @@ namespace Spark.Identity
     public class SparkExternalIdGrantValidator : IExtensionGrantValidator
     {
         private readonly ITokenValidator _validator;
-        protected readonly IUserRepository _userRepository;
-        public SparkExternalIdGrantValidator(ITokenValidator validator, IUserRepository userRepository)
+        
+        public SparkExternalIdGrantValidator(ITokenValidator validator)
         {
             _validator = validator;
-            _userRepository = userRepository;
+        
         }
 
         public string GrantType => "userid";
