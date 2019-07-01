@@ -114,9 +114,9 @@ namespace Spark.Identity
                 },
                 new Client
                 {
-                    ClientId = "delclient",
+                    ClientId = "userid",
 
-                    AllowedGrantTypes = {"delegation"},
+                    AllowedGrantTypes = {"userid"},
                     AccessTokenType = AccessTokenType.Jwt,
                     AccessTokenLifetime = 3600,
                     IdentityTokenLifetime = 3600,
@@ -234,7 +234,7 @@ namespace Spark.Identity
                 .AddInMemoryApiResources(Config.GetApiResources())
                 .AddInMemoryClients(Config.GetClients())
                 .AddCustomUserStore()
-                .AddExtensionGrantValidator<SparkExternalIdGrantValidatorcs>();
+                .AddExtensionGrantValidator<SparkExternalIdGrantValidator>();
             services.AddControllers();
         }
 

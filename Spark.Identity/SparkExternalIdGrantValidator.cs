@@ -7,17 +7,17 @@ using IdentityServer4.Validation;
 
 namespace Spark.Identity
 {
-    public class SparkExternalIdGrantValidatorcs : IExtensionGrantValidator
+    public class SparkExternalIdGrantValidator : IExtensionGrantValidator
     {
         private readonly ITokenValidator _validator;
         protected readonly IUserRepository _userRepository;
-        public SparkExternalIdGrantValidatorcs(ITokenValidator validator, IUserRepository userRepository)
+        public SparkExternalIdGrantValidator(ITokenValidator validator, IUserRepository userRepository)
         {
             _validator = validator;
             _userRepository = userRepository;
         }
 
-        public string GrantType => "delegation";
+        public string GrantType => "userid";
 
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
         {
@@ -31,7 +31,7 @@ namespace Spark.Identity
             }
 
             var result = _userRepository.FindBySubjectId(userToken);
-
+            
             if (result == null)
             {
                 context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
