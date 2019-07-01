@@ -139,70 +139,13 @@ namespace Spark.Identity
             };
         }
     }
-    public class CustomUser
-    {
-        public string SubjectId { get; set; }
-        public string Email { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-    }
 
-    public interface IUserRepository
-    {
-        bool ValidateCredentials(string username, string password);
-
-        CustomUser FindBySubjectId(string subjectId);
-
-        CustomUser FindByUsername(string username);
-    }
-
-    public class UserRepository : IUserRepository
-    {
-        // some dummy data. Replce this with your user persistence. 
-        private readonly List<CustomUser> _users = new List<CustomUser>
-        {
-            new CustomUser{
-                SubjectId = "123",
-                UserName = "damienbod",
-                Password = "damienbod",
-                Email = "damienbod@email.ch"
-            },
-            new CustomUser{
-                SubjectId = "124",
-                UserName = "raphael",
-                Password = "raphael",
-                Email = "raphael@email.ch"
-            },
-        };
-
-        public bool ValidateCredentials(string username, string password)
-        {
-            var user = FindByUsername(username);
-            if (user != null)
-            {
-                return user.Password.Equals(password);
-            }
-
-            return false;
-        }
-
-        public CustomUser FindBySubjectId(string subjectId)
-        {
-            return _users.FirstOrDefault(x => x.SubjectId == subjectId);
-        }
-
-        public CustomUser FindByUsername(string username)
-        {
-            return _users.FirstOrDefault(x => x.UserName.Equals(username, StringComparison.OrdinalIgnoreCase));
-        }
-    }
 
 
     public static class CustomIdentityServerBuilderExtensions
     {
         public static IIdentityServerBuilder AddCustomUserStore(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddSingleton<IUserRepository, UserRepository>();
             builder.AddProfileService<SparkProfileService>();
             builder.AddResourceOwnerValidator<SparkResourceOwnerPasswordValidator>();
 

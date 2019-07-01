@@ -21,25 +21,15 @@ namespace Spark.Identity
 
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
         {
-
-            var userToken = context.Request.Raw.Get("Token");
-            var str = context.Request.Raw.Get("Parameters");
-            if (string.IsNullOrEmpty(userToken))
-            {
-                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
-                return;
-            }
-
-            var result = _userRepository.FindBySubjectId(userToken);
+            var userId = context.Request.Raw.Get("UserId");
             
-            if (result == null)
+            if (string.IsNullOrEmpty(userId))
             {
                 context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
                 return;
             }
 
-            // get user's identity
-            var sub = result.SubjectId;
+            var sub = userId;
 
             context.Result = new GrantValidationResult(sub, GrantType);
             return;

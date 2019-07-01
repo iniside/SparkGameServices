@@ -13,11 +13,9 @@ namespace Spark.Identity.Services
     public class SparkProfileService : IProfileService
     {
         protected readonly ILogger Logger;
-        protected readonly IUserRepository _userRepository;
 
-        public SparkProfileService(IUserRepository userRepository, ILogger<SparkProfileService> logger)
+        public SparkProfileService(ILogger<SparkProfileService> logger)
         {
-            _userRepository = userRepository;
             Logger = logger;
         }
 
@@ -32,13 +30,12 @@ namespace Spark.Identity.Services
                 context.RequestedClaimTypes,
                 context.Caller);
 
-            var user = _userRepository.FindBySubjectId(context.Subject.GetSubjectId());
 
             var claims = new List<Claim>
             {
-                new Claim("id", user.SubjectId),
-                new Claim("username", user.UserName),
-                new Claim("email", user.Email)
+                new Claim("id", context.Subject.GetSubjectId()),
+                new Claim("username", ""),
+                new Claim("email", "")
 
             };
 
@@ -48,8 +45,7 @@ namespace Spark.Identity.Services
         public async Task IsActiveAsync(IsActiveContext context)
         {
             var sub = context.Subject.GetSubjectId();
-            var user = _userRepository.FindBySubjectId(context.Subject.GetSubjectId());
-            context.IsActive = user != null;
+            context.IsActive = sub != null;
         }
     }
 }
