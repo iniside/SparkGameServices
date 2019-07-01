@@ -59,7 +59,8 @@ namespace Spark.Register.Controllers
             UserRegisteredEvent newUser = new UserRegisteredEvent
             {
                 UserId = userGuid,
-                ExternalId = null
+                ExternalId = null,
+                Provider = null
             };
             await _client.PublishAsync(newUser);
 
@@ -82,7 +83,8 @@ namespace Spark.Register.Controllers
             UserRegisteredEvent newUser = new UserRegisteredEvent
             {
                 UserId = userGuid,
-                ExternalId = Model.ExternalId
+                ExternalId = Model.ExternalId,
+                Provider = Model.ExternalName
             };
             await _client.PublishAsync(newUser);
 
