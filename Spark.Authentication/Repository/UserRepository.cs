@@ -37,21 +37,13 @@ namespace Spark.Authentication.Repository
 
         public async Task<string> LoginWithExternalProvider(string ExternalId, string Provider)
         {
-            var filterID = Builders<SparkUser>.Filter.Where(e => e.ExternalId == ExternalId);
-            var filterProvider = Builders<SparkUser>.Filter.Where(e => e.Provider == Provider);
+            var builder = Builders<SparkUser>.Filter;
 
-            FilterDefinition<SparkUser> d = new ObjectFilterDefinition<SparkUser>(filterID);
-            FilterDefinition<SparkUser> o = new ObjectFilterDefinition<SparkUser>(filterProvider);
-
-            var filter = Builders<SparkUser>.Filter.And(new List<FilterDefinition<SparkUser>>
-            {
-                d,
-                o
-            });
+            var filter = builder.Eq(x => x.ExternalId, ExternalId) & builder.Eq(x => x.Provider, Provider);
 
             var col = _database.GetCollection<SparkUser>("sparkUser");
 
-            var res = await col.FindAsync(filterID);
+            var res = await col.FindAsync(filter);
 
             var user = await res.FirstAsync();
 
