@@ -21,7 +21,7 @@ namespace Spark.Authentication.Controllers
     {
         [Route("api/values/login")]
         [HttpPost]
-        public void Login()//string Login, string Password)
+        public string Login()//string Login, string Password)
         {
             var ru = new RequestUrl("https://localhost:6001/connect/authorize");
             var payload = new
@@ -49,12 +49,14 @@ namespace Spark.Authentication.Controllers
             {
                  Address = "https://localhost:6001/connect/token",
 
-                 ClientId = "delclient",
+                 ClientId = "userid",
                  ClientSecret = "apisecret",
-                 GrantType = "delegation",
+                 GrantType = "userid",
                  Parameters = dupa
 
             }).Result;
+
+            
             //var response = client.RequestPasswordTokenAsync(new PasswordTokenRequest
             //{
             //    Address = "https://localhost:6001/connect/token",
@@ -71,6 +73,8 @@ namespace Spark.Authentication.Controllers
             {
 
             }
+
+            return response.AccessToken;
         }
     }
 }
