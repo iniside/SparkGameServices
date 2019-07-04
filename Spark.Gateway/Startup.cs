@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,33 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic.ApplicationServices;
 using Newtonsoft.Json;
+using RawRabbit;
+using RawRabbit.Configuration;
+using RawRabbit.DependencyInjection.ServiceCollection;
+using RawRabbit.Instantiation;
+using Spark.Events;
+
+namespace Spark.Events
+{
+    public class MessageWrapper
+    {
+        public string MessageType { get; set; }
+
+        public string MessageBody { get; set; }
+    }
+
+    public class TestMessage
+    {
+        public string UserId { get; set; }
+        public string SomeMessage { get; set; }
+    }
+
+    public class TestMessageResponse
+    {
+        public string UserId { get; set; }
+        public string SomeMessage { get; set; }
+    }
+}
 
 namespace Spark.Gateway
 {
@@ -33,33 +61,60 @@ namespace Spark.Gateway
     //generic hub to route messages from backend to all clients.
     public class MessageHub : Hub
     {
+        private readonly IBusClient _client;
+
+        public MessageHub(IBusClient client)
+        {
+            _client = client;
+        }
+
         public async Task HandleMessage(string message)
         {
             if (message != null)
             {
                 if (message.Length > 0)
                 {
-                    await Clients.Users("fcc4482d-9f24-4968-9f7e-93f79f00cee6")
-                        .SendCoreAsync("MMessageResponse", new object[1]
-                        {
-                            "123"
-                        });
-                    //return await Task.FromResult("Success");
+                    MessageWrapper msg = System.Text.Json.Serialization.JsonSerializer.Parse<MessageWrapper>(message);
+
+                    object testMsg = System.Text.Json.Serialization.JsonSerializer.Parse(
+                                        msg.MessageBody, Type.GetType(msg.MessageType));
+
+                    await _client.PublishAsync(testMsg);
+
+                    //await Clients.Users("fcc4482d-9f24-4968-9f7e-93f79f00cee6")
+                    //    .SendCoreAsync("MMessageResponse", new object[1]
+                    //    {
+                    //        "123"
+                    //    });
                 }
             }
-            //if (message.MessageBody != null)
-            //{
-            //    if (message.MessageBody.Length > 0)
-            //    {
-            //        if (message.MessageType.Length > 0)
-            //        {
-            //
-            //        }
-            //    }
-            //}
-            //return await Task.FromResult("Fail");
         }
     }
+    public interface IEventHandler
+    {
+
+    }
+    public class EventHandler : IEventHandler
+    {
+        private readonly IBusClient _client;
+        private readonly IHubContext<MessageHub> _hubContext;
+        public EventHandler(IBusClient client, IHubContext<MessageHub> hubContext)
+        {
+            _client = client;
+            _hubContext = hubContext;
+
+            _client.SubscribeAsync<Spark.Events.TestMessageResponse>(ServerValuesAsync);
+        }
+
+        private async Task ServerValuesAsync(Events.TestMessageResponse arg)
+        {
+            await _hubContext.Clients.Users(arg.UserId).SendCoreAsync("MessageHandler", new object[1]
+            {
+                arg.SomeMessage
+            });
+        }
+    }
+
     public class NameUserIdProvider : IUserIdProvider
     {
         public string GetUserId(HubConnectionContext connection)
@@ -71,6 +126,7 @@ namespace Spark.Gateway
 
     public class Startup
     {
+        private IEventHandler _handler;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -81,13 +137,6 @@ namespace Spark.Gateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddAuthentication(o =>
-            //{
-            //    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //
-            //})
-
             var tokenValidationParameters = new TokenValidationParameters()
             {
                 ValidIssuer = "http://localhost:6001",
@@ -128,6 +177,15 @@ namespace Spark.Gateway
                     };
                 });
             services.AddSignalR();
+            services.AddRawRabbit(new RawRabbitOptions
+            {
+                ClientConfiguration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("rawrabbit.json")
+                    .Build()
+                    .Get<RawRabbitConfiguration>(),
+            });
+            services.AddTransient<IEventHandler, EventHandler>();
             services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
             services.AddControllers();
         }
@@ -150,6 +208,8 @@ namespace Spark.Gateway
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            _handler = app.ApplicationServices.GetRequiredService<IEventHandler>();
 
             app.UseEndpoints(endpoints =>
             {
