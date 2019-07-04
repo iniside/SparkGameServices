@@ -37,6 +37,14 @@ namespace Spark.Events
         public string MessageBody { get; set; }
     }
 
+    public class MessageWrapperResponse
+    {
+        public string UserId { get; set; }
+        public string MessageType { get; set; }
+
+        public string MessageBody { get; set; }
+    }
+
     public class TestMessage
     {
         public string UserId { get; set; }
@@ -68,24 +76,16 @@ namespace Spark.Gateway
             _client = client;
         }
 
-        public async Task HandleMessage(string message)
+        public async Task HandleMessage(MessageWrapper message)
         {
-            if (message != null)
+            if (message.MessageBody != null)
             {
-                if (message.Length > 0)
+                if (message.MessageBody.Length > 0)
                 {
-                    MessageWrapper msg = System.Text.Json.Serialization.JsonSerializer.Parse<MessageWrapper>(message);
-
                     object testMsg = System.Text.Json.Serialization.JsonSerializer.Parse(
-                                        msg.MessageBody, Type.GetType(msg.MessageType));
+                                        message.MessageBody, Type.GetType(message.MessageType));
 
                     await _client.PublishAsync(testMsg);
-
-                    //await Clients.Users("fcc4482d-9f24-4968-9f7e-93f79f00cee6")
-                    //    .SendCoreAsync("MMessageResponse", new object[1]
-                    //    {
-                    //        "123"
-                    //    });
                 }
             }
         }
@@ -103,14 +103,14 @@ namespace Spark.Gateway
             _client = client;
             _hubContext = hubContext;
 
-            _client.SubscribeAsync<Spark.Events.TestMessageResponse>(ServerValuesAsync);
+            _client.SubscribeAsync<Spark.Events.MessageWrapperResponse>(ServerValuesAsync);
         }
 
-        private async Task ServerValuesAsync(Events.TestMessageResponse arg)
+        private async Task ServerValuesAsync(Events.MessageWrapperResponse arg)
         {
             await _hubContext.Clients.Users(arg.UserId).SendCoreAsync("MessageHandler", new object[1]
             {
-                arg.SomeMessage
+                arg
             });
         }
     }
