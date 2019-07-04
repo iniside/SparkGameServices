@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spark.Gateway", "Spark.Gate
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spark.Authentication", "Spark.Authentication\Spark.Authentication.csproj", "{A46E6F77-2585-4749-815E-EAD0A378CE95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spark.SignalRClient", "Spark.SignalRClient\Spark.SignalRClient.csproj", "{8385AB4C-B95F-40BA-886B-FDB9CF48561C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spark.SignalRClient", "Spark.SignalRClient\Spark.SignalRClient.csproj", "{8385AB4C-B95F-40BA-886B-FDB9CF48561C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spark.TestService", "Spark.TestService\Spark.TestService.csproj", "{B7EC6890-FEEC-4813-90A7-6C66D7638E3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{8385AB4C-B95F-40BA-886B-FDB9CF48561C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8385AB4C-B95F-40BA-886B-FDB9CF48561C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8385AB4C-B95F-40BA-886B-FDB9CF48561C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7EC6890-FEEC-4813-90A7-6C66D7638E3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7EC6890-FEEC-4813-90A7-6C66D7638E3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7EC6890-FEEC-4813-90A7-6C66D7638E3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7EC6890-FEEC-4813-90A7-6C66D7638E3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
