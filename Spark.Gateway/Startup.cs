@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IdentityModel.AspNetCore.OAuth2Introspection;
 using IdentityServer4.AccessTokenValidation;
+using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -18,19 +19,53 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic.ApplicationServices;
+using Newtonsoft.Json;
 
 namespace Spark.Gateway
 {
+    public class MessageWrapper
+    {
+        public string MessageType { get; set; }
+
+        public string MessageBody { get; set; }
+    }
     //generic hub to route messages from backend to all clients.
     public class MessageHub : Hub
     {
-
+        public async Task HandleMessage(string message)
+        {
+            if (message != null)
+            {
+                if (message.Length > 0)
+                {
+                    await Clients.Users("fcc4482d-9f24-4968-9f7e-93f79f00cee6")
+                        .SendCoreAsync("MMessageResponse", new object[1]
+                        {
+                            "123"
+                        });
+                    //return await Task.FromResult("Success");
+                }
+            }
+            //if (message.MessageBody != null)
+            //{
+            //    if (message.MessageBody.Length > 0)
+            //    {
+            //        if (message.MessageType.Length > 0)
+            //        {
+            //
+            //        }
+            //    }
+            //}
+            //return await Task.FromResult("Fail");
+        }
     }
     public class NameUserIdProvider : IUserIdProvider
     {
         public string GetUserId(HubConnectionContext connection)
         {
-            return connection.User?.Identity?.Name;
+            string id = connection?.User?.FindFirst("id").Value;
+            return id;
         }
     }
 
@@ -64,21 +99,6 @@ namespace Spark.Gateway
 
             services
                 .AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                //.AddIdentityServerAuthentication(options =>
-                //{
-                //    options.Authority = "http://localhost:6001";
-                //    options.RequireHttpsMetadata = false;
-                //    //options.ApiName = "my-api";
-                //    options.NameClaimType = "sub";
-                //    options.SaveToken = true;
-                //    options.ApiSecret = "apisecret".Sha256();
-                //    //options.TokenRetriever = new Func<HttpRequest, string>(req =>
-                //    //{
-                //    //    var fromHeader = TokenRetrieval.FromAuthorizationHeader();
-                //    //    var fromQuery = TokenRetrieval.FromQueryString();
-                //    //    return fromHeader(req) ?? fromQuery(req);
-                //    //}
-                //})
                 .AddJwtBearer(o =>
                 {
                     o.Authority = "https://localhost:6001";
@@ -93,6 +113,7 @@ namespace Spark.Gateway
                         OnMessageReceived = context =>
                         {
                             var accessToken = context.Request.Query["access_token"];
+                            var asd = context.Request.Headers.Values;
 
                             // If the request is for our hub...
                             var path = context.HttpContext.Request.Path;
