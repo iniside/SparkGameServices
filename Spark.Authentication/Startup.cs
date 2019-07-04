@@ -110,7 +110,7 @@ namespace Spark.Authentication
             }
             var eventBus = app.ApplicationServices.GetRequiredService<IEventHandler>();
             app.UseCors();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
